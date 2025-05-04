@@ -17,6 +17,7 @@ import {
 
 import { handleNavigationCd, handleNavigationLs, handleNavigationUp } from './operations/navigation/index.js';
 import { handleFsAdd, handleFsCat, handleFsCp, handleFsMkdir, handleFsMv, handleFsRm, handleFsRn } from './operations/fs/index.js';
+import { handleOsArchitecture, handleOsCpus, handleOsEol, handleOsHomedir, handleOsUsername } from './operations/os/index.js';
 
 const DIRNAME = dirname(fileURLToPath(import.meta.url));
 
@@ -136,6 +137,47 @@ const fileManager = async () => {
         const pathToFile = join(currentPath, pathToFileFromCurrentPath);
         await handleFsRm(pathToFile);
         
+        promptTerminalInterface();
+        break;
+      }
+        
+      case COMMAND_OPERATION.os: {
+        switch (output) {
+          case COMMAND[COMMAND_OPERATION.os].eol: {
+            handleOsEol();
+
+            break;
+          }
+
+          case COMMAND[COMMAND_OPERATION.os].cpus: {
+            handleOsCpus();
+
+            break;
+          }
+
+          case COMMAND[COMMAND_OPERATION.os].homedir: {
+            handleOsHomedir();
+
+            break;
+          }
+
+          case COMMAND[COMMAND_OPERATION.os].username: {
+            handleOsUsername();
+
+            break;
+          }
+
+          case COMMAND[COMMAND_OPERATION.os].architecture: {
+            handleOsArchitecture();
+
+            break;
+          }
+
+          case COMMAND[COMMAND_OPERATION.os].architecture: {
+            break;
+          }
+        }
+
         promptTerminalInterface();
         break;
       }
