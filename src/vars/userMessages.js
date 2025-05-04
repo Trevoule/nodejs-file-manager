@@ -18,11 +18,8 @@ export const PRINT_COMMAND_MESSAGE = 'Print command';
 
 export const DEFAULT_PRINT_COMMAND_MESSAGE = `\n${PRINT_COMMAND_MESSAGE}: `;
 
-export const PROVIDE_FILE_DIRECTORY_MESSAGE = 'Provide file directory';
-
-
 // ERRORS
 
 export const OPERATION_FAILED_ERROR_MESSAGE = 'Operation failed: no such file or directory';
 
-export const INVALID_INPUT = 'Invalid input';
+export const INVALID_INPUT_MESSAGE = '\nInvalid input:';
