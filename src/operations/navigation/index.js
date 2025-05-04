@@ -1,14 +1,14 @@
 import fs, { access, readdir, stat } from 'node:fs/promises'
 import { join } from 'node:path';
 
-import { handleCurrentPath } from '../utils.js';
+import { handleCurrentPath } from '../../utils/index.js';
 
-import { OPERATION_FAILED_ERROR_MESSAGE } from '../vars/userMessages.js';
+import { OPERATION_FAILED_ERROR_MESSAGE } from '../../vars/userMessages.js';
 
 async function handleNavigationCd(currentPath, directory, handleNextDirectory) {
-  const nextDirectory = await handleCurrentPath(currentPath, directory);
   
   try {
+    const nextDirectory = await handleCurrentPath(currentPath, directory);
     await access(nextDirectory, fs.constants.F_OK | fs.constants.W_OK);
     handleNextDirectory(nextDirectory);
   } catch (err) {
