@@ -4,6 +4,7 @@ import readline from 'node:readline';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { handleNavigationCd, handleNavigationLs, handleNavigationUp } from './operations/navigation.js';
 import { printCommandsInfo } from './utils.js';
 import { COMMAND, COMMAND_OPERATION } from './vars/commandOperations.js';
 import {
@@ -13,6 +14,7 @@ import {
   EXIT_OPTION_MESSAGE,
   GREETINGS_USER_MESSAGE,
   INVALID_INPUT,
+  PROVIDE_FILE_DIRECTORY_MESSAGE,
 } from './vars/userMessages.js';
 
 const DIRNAME = dirname(fileURLToPath(import.meta.url));
@@ -31,16 +33,48 @@ const fileManager = async () => {
 
   const terminalInterface = readline.createInterface({ input, output });
 
-  const promptTerminalInterface= (msg = DEFAULT_PRINT_COMMAND_MESSAGE) => terminalInterface.question(msg, handleCommand);
+  const promptTerminalInterface = (msg = DEFAULT_PRINT_COMMAND_MESSAGE) => terminalInterface.question(msg, handleCommand);
   promptTerminalInterface();
 
   async function handleCommand(output) {
     console.log(`\n${CURRENT_PATH_USER_MESSAGE} ${currentPath}`);
     console.log(`\n${EXIT_OPTION_MESSAGE}\n`);
 
-    const trimmedCommand = output.trim();
+    const command = output.trim();
 
-    switch (trimmedCommand) {      
+    switch (command) {
+      case COMMAND[COMMAND_OPERATION.navigation].cd: {
+        try {
+          const directory = await new Promise(resolve => {
+            terminalInterface.question(`${PROVIDE_FILE_DIRECTORY_MESSAGE}: `, resolve)
+          });
+
+          await handleNavigationCd(currentPath, directory, (nextDirectory) => {
+            currentPath = nextDirectory;
+          });
+          console.log(`\n${CURRENT_PATH_USER_MESSAGE} ${currentPath}`);
+          console.log(`\n${EXIT_OPTION_MESSAGE}\n`);
+        } catch (err) {
+          console.error(err);
+        }
+
+        promptTerminalInterface();
+        break;
+      }
+
+      case COMMAND[COMMAND_OPERATION.navigation].ls: {
+        await handleNavigationLs(currentPath);
+        promptTerminalInterface();
+        break;
+      }
+        
+      case COMMAND[COMMAND_OPERATION.navigation].up: {
+        const { path } = await handleNavigationUp(currentPath);
+        currentPath = path;
+        promptTerminalInterface();
+        break;
+      }
+
       case COMMAND.general.exit:
         terminalInterface.close()
         break;
