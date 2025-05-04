@@ -1,12 +1,11 @@
 import process from 'node:process';
 import { stdin as input, stdout as output } from 'node:process';
 import readline from 'node:readline';
-import { dirname } from 'node:path';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { handleNavigationCd, handleNavigationLs, handleNavigationUp } from './operations/navigation/index.js';
 import { printCommandsInfo } from './utils.js';
-import { COMMAND, COMMAND_OPERATION } from '../src/vars/commandOperations.js';
+import { COMMAND, COMMAND_OPERATION } from './vars/commandOperations.js';
 import {
   CLOSE_USER_MESSAGE,
   CURRENT_PATH_USER_MESSAGE,
@@ -15,6 +14,9 @@ import {
   GREETINGS_USER_MESSAGE,
   INVALID_INPUT_MESSAGE,
 } from './vars/userMessages.js';
+
+import { handleNavigationCd, handleNavigationLs, handleNavigationUp } from './operations/navigation/index.js';
+import { handleFsAdd, handleFsCat, handleFsCp, handleFsMkdir, handleFsMv, handleFsRm, handleFsRn } from './operations/fs/index.js';
 
 const DIRNAME = dirname(fileURLToPath(import.meta.url));
 
@@ -73,7 +75,71 @@ const fileManager = async () => {
         promptTerminalInterface();
         break;
       }
+        
+      case COMMAND[COMMAND_OPERATION.fs].cat: {
+        const pathToFileFromCurrentPath = output.split(' ')[1];
+        const pathToFile = join(currentPath, pathToFileFromCurrentPath);
+        await handleFsCat(pathToFile);
 
+        promptTerminalInterface();
+        break;
+      }
+
+      case COMMAND[COMMAND_OPERATION.fs].add: {
+        const newFileName = output.split(' ')[1];
+        await handleFsAdd(currentPath, newFileName);
+
+        promptTerminalInterface();
+        break;
+      }
+
+      case COMMAND[COMMAND_OPERATION.fs].mkdir: {
+        const newDirectoryName = output.split(' ')[1];
+        await handleFsMkdir(currentPath, newDirectoryName);
+        
+        promptTerminalInterface();
+        break;
+      }
+
+      case COMMAND[COMMAND_OPERATION.fs].rn: {
+        const pathToFileFromCurrentPath = output.split(' ')[1];
+        const newFileName = output.split(' ')[2];
+        const pathToFile = join(currentPath, pathToFileFromCurrentPath);
+        await handleFsRn(pathToFile, newFileName);
+        
+        promptTerminalInterface();
+        break;
+      }
+
+      case COMMAND[COMMAND_OPERATION.fs].cp: {
+        const pathToFileFromCurrentPath = output.split(' ')[1];
+        const pathToNewDirectory = output.split(' ')[2];
+        const pathToFile = join(currentPath, pathToFileFromCurrentPath);
+        await handleFsCp(pathToFile, pathToNewDirectory);
+        
+        promptTerminalInterface();
+        break;
+      }
+
+      case COMMAND[COMMAND_OPERATION.fs].mv: {
+        const pathToFileFromCurrentPath = output.split(' ')[1];
+        const pathToNewDirectory = output.split(' ')[2];
+        const pathToFile = join(currentPath, pathToFileFromCurrentPath);
+        await handleFsMv(pathToFile, pathToNewDirectory);
+        
+        promptTerminalInterface();
+        break;
+      }
+
+      case COMMAND[COMMAND_OPERATION.fs].rm: {
+        const pathToFileFromCurrentPath = output.split(' ')[1];
+        const pathToFile = join(currentPath, pathToFileFromCurrentPath);
+        await handleFsRm(pathToFile);
+        
+        promptTerminalInterface();
+        break;
+      }
+        
       case COMMAND.general.exit:
         terminalInterface.close()
         break;
