@@ -1,13 +1,15 @@
 import { join, resolve } from 'node:path';
+import os from 'node:os';
 
 import { COMMAND_OPERATIONS } from './vars/commandOperations.js';
 
 export function handleCurrentPath(currentDirectory, nextDirectory) {
-  const rootDir = resolve(process.cwd()) + '/';
+  const rootDir = os.homedir() + '/';
   const newDirectory = join(currentDirectory, nextDirectory);
 
-  if (rootDir !== currentDirectory) return newDirectory;
-  return rootDir;
+  if (newDirectory.length > rootDir.length) return newDirectory;
+  if (rootDir === currentDirectory) return rootDir;
+  return newDirectory;
 };
 
 export function printCommandsInfo(operation) {
