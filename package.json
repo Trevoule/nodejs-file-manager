@@ -1,0 +1,15 @@
+{
+  "name": "nodejs-file-manager",
+  "version": "1.0.0",
+  "main": "index.js",
+  "engines": {
+    "node": ">=22.14.0"
+  },
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/fileManager.js"
+  },
+  "license": "ISC",
+  "description": ""
+}
