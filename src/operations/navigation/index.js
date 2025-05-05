@@ -1,18 +1,15 @@
 import fs, { access, readdir, stat } from 'node:fs/promises'
 import { join } from 'node:path';
 
-import { handleCurrentPath } from '../../utils/index.js';
-
-import { OPERATION_FAILED_ERROR_MESSAGE } from '../../vars/userMessages.js';
+import { handleCurrentPath, handleError } from '../../utils/index.js';
 
 async function handleNavigationCd(currentPath, directory, handleNextDirectory) {
-  
   try {
     const nextDirectory = await handleCurrentPath(currentPath, directory);
     await access(nextDirectory, fs.constants.F_OK | fs.constants.W_OK);
     handleNextDirectory(nextDirectory);
   } catch (err) {
-    console.error(`\n${OPERATION_FAILED_ERROR_MESSAGE}\n`);
+    handleError(err);
   }
 }
 
@@ -21,19 +18,18 @@ async function handleNavigationLs(currentPath) {
     const files = await readdir(currentPath);
     
     const filesInfo = await Promise.all(files.map(async (file) => {
-      const filePath = join(currentPath, file);
-      const stats = await stat(filePath);
-      const name = file.split('.')[0];
+    const filePath = join(currentPath, file);
+    const stats = await stat(filePath);
 
-      return {
-        Name: name,
-        Type: stats.isDirectory() ? 'directory' : 'file',
+    return {
+      Name: file,
+      Type: stats.isDirectory() ? 'directory' : 'file',
       };
     })
   );    
     console.table(filesInfo);
   } catch (err) {
-    console.error(err);
+    handleError(err);
   };
 }
 

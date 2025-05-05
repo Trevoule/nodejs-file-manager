@@ -2,8 +2,9 @@ import { join } from 'node:path';
 import os from 'node:os';
 
 import { COMMAND_OPERATIONS } from '../vars/commandOperations.js';
+import { EEXIST_ERROR_MESSAGE, ENOENT_ERROR_MESSAGE, ERROR_MESSAGE, INVALID_FILE_NAME_ERROR_MESSAGE } from '../vars/userMessages.js';
 
-export function handleCurrentPath(currentDirectory, nextDirectory) {
+function handleCurrentPath(currentDirectory, nextDirectory) {
   const rootDir = os.homedir() + '/';
   const newDirectory = join(currentDirectory, nextDirectory);
 
@@ -12,7 +13,7 @@ export function handleCurrentPath(currentDirectory, nextDirectory) {
   return newDirectory;
 };
 
-export function printCommandsInfo(operation) {
+function printCommandsInfo(operation) {
   const { title, commands } = COMMAND_OPERATIONS[operation];
 
   const commandOperationTitle = `${title}: \n`;
@@ -26,3 +27,29 @@ export function printCommandsInfo(operation) {
   console.log(`${commandOperationCommands} \n`);
 }
 
+function checkIsValidFileName(fileName) {
+  return /^[^\/\\:*?"<>|]+\.[a-zA-Z0-9]+$/.test(fileName);
+}
+
+function handleError(error) {
+  const { code } = error;
+
+  if (code === 'ENOENT') {
+    console.error(ENOENT_ERROR_MESSAGE);
+    return;
+  }
+
+  if (code === 'EEXIST') {
+    console.error(EEXIST_ERROR_MESSAGE);
+    return;
+  }
+
+  if (code === 'SYMBOLS_NOT_ALLOWED') {
+    console.error(INVALID_FILE_NAME_ERROR_MESSAGE);
+    return;
+  }
+
+  console.error(error);
+}
+
+export { handleCurrentPath,  printCommandsInfo, checkIsValidFileName, handleError };
