@@ -2,7 +2,7 @@ import { join } from 'node:path';
 import os from 'node:os';
 
 import { COMMAND_OPERATIONS } from '../vars/commandOperations.js';
-import { EEXIST_ERROR_MESSAGE, ENOENT_ERROR_MESSAGE, ERROR_MESSAGE, INVALID_FILE_NAME_ERROR_MESSAGE } from '../vars/userMessages.js';
+import { EEXIST_ERROR_MESSAGE, ENOENT_ERROR_MESSAGE, ERROR_MESSAGE, INVALID_FILE_NAME_ERROR_MESSAGE, MESSAGE_COLORS } from '../vars/userMessages.js';
 
 function handleCurrentPath(currentDirectory, nextDirectory) {
   const rootDir = os.homedir() + '/';
@@ -34,22 +34,12 @@ function checkIsValidFileName(fileName) {
 function handleError(error) {
   const { code } = error;
 
-  if (code === 'ENOENT') {
-    console.error(ENOENT_ERROR_MESSAGE);
-    return;
-  }
-
-  if (code === 'EEXIST') {
-    console.error(EEXIST_ERROR_MESSAGE);
-    return;
-  }
-
   if (code === 'SYMBOLS_NOT_ALLOWED') {
     console.error(INVALID_FILE_NAME_ERROR_MESSAGE);
     return;
   }
 
-  console.error(error);
+  console.error(`\n${MESSAGE_COLORS.RED}${error}${MESSAGE_COLORS.RESET}`);
 }
 
 export { handleCurrentPath,  printCommandsInfo, checkIsValidFileName, handleError };

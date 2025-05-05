@@ -1,12 +1,13 @@
 import process from 'node:process';
 import { stdin as input, stdout as output } from 'node:process';
 import readline from 'node:readline';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { join } from 'node:path';
+import os from 'node:os';
 
-import { printCommandsInfo } from './utils.js';
+import { printCommandsInfo } from './utils/index.js';
 import { COMMAND, COMMAND_OPERATION } from './vars/commandOperations.js';
 import {
+  AVAILABLE_COMMANDS_USER_MESSAGE,
   CLOSE_USER_MESSAGE,
   CURRENT_PATH_USER_MESSAGE,
   DEFAULT_PRINT_COMMAND_MESSAGE,
@@ -18,15 +19,18 @@ import {
 import { handleNavigationCd, handleNavigationLs, handleNavigationUp } from './operations/navigation/index.js';
 import { handleFsAdd, handleFsCat, handleFsCp, handleFsMkdir, handleFsMv, handleFsRm, handleFsRn } from './operations/fs/index.js';
 import { handleOsArchitecture, handleOsCpus, handleOsEol, handleOsHomedir, handleOsUsername } from './operations/os/index.js';
+import { handleHash } from './operations/hash/index.js';
+import { handleCompress, handleDecompress } from './operations/zlib/index.js';
 
-const DIRNAME = dirname(fileURLToPath(import.meta.url));
+const homedir = os.homedir();
 
 const fileManager = async () => {
-  console.log(GREETINGS_USER_MESSAGE, '\n');
-  console.log('Available commands:', '\n');
+  // STARTING DIRECTORY - ROOT FOLDER
+  let currentPath = homedir;
 
-  let currentPath = DIRNAME;
-  
+  console.log(GREETINGS_USER_MESSAGE);
+  console.log(AVAILABLE_COMMANDS_USER_MESSAGE);
+
   printCommandsInfo(COMMAND_OPERATION.navigation);
   printCommandsInfo(COMMAND_OPERATION.fs);
   printCommandsInfo(COMMAND_OPERATION.os);
@@ -37,7 +41,7 @@ const fileManager = async () => {
 
   const promptTerminalInterface = (msg = DEFAULT_PRINT_COMMAND_MESSAGE) => {
     console.log(`\n${CURRENT_PATH_USER_MESSAGE} ${currentPath}`);
-    console.log(`\n${EXIT_OPTION_MESSAGE}\n`);
+    console.log(EXIT_OPTION_MESSAGE);
     
     return terminalInterface.question(msg, handleCommand);
   };
@@ -124,8 +128,9 @@ const fileManager = async () => {
 
       case COMMAND[COMMAND_OPERATION.fs].mv: {
         const pathToFileFromCurrentPath = output.split(' ')[1];
-        const pathToNewDirectory = output.split(' ')[2];
+        const pathToNewDirectoryFromCurrentPath = output.split(' ')[2];
         const pathToFile = join(currentPath, pathToFileFromCurrentPath);
+        const pathToNewDirectory = join(currentPath, pathToNewDirectoryFromCurrentPath);
         await handleFsMv(pathToFile, pathToNewDirectory);
         
         promptTerminalInterface();
@@ -172,11 +177,40 @@ const fileManager = async () => {
 
             break;
           }
-
-          case COMMAND[COMMAND_OPERATION.os].architecture: {
-            break;
-          }
         }
+
+        promptTerminalInterface();
+        break;
+      }
+        
+      case COMMAND[COMMAND_OPERATION.hash].hash: {
+        const pathToFileFromCurrentPath = output.split(' ')[1];
+        const pathToFile = join(currentPath, pathToFileFromCurrentPath);
+        await handleHash(pathToFile);
+
+        promptTerminalInterface();
+        break;
+      }
+
+      case COMMAND[COMMAND_OPERATION.zlib].compress: {
+        const pathToFileFromCurrentPath = output.split(' ')[1];
+        const pathToDestinationFromCurrentPath = output.split(' ')[2];
+        const pathToFile = join(currentPath, pathToFileFromCurrentPath);
+        const pathToDestination = join(currentPath, pathToDestinationFromCurrentPath);
+
+        await handleCompress(pathToFile, pathToDestination);
+
+        promptTerminalInterface();
+        break;
+      }
+        
+      case COMMAND[COMMAND_OPERATION.zlib].decompress: {
+        const pathToFileFromCurrentPath = output.split(' ')[1];
+        const pathToDestinationFromCurrentPath = output.split(' ')[2];
+        const pathToFile = join(currentPath, pathToFileFromCurrentPath);
+        const pathToDestination = join(currentPath, pathToDestinationFromCurrentPath);
+
+        await handleDecompress(pathToFile, pathToDestination);
 
         promptTerminalInterface();
         break;
