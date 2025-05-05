@@ -35,7 +35,7 @@ async function handleDecompress(pathToFile, pathToDestination) {
     
     const brotli = createBrotliDecompress();
     const sourceStream = createReadStream(pathToFile);
-    const destinationStream = createWriteStream(pathToDestination);
+    const destinationStream = createWriteStream(pathToDestination, { flags: 'wx' });
     
     await pipeline(sourceStream, brotli, destinationStream);
 

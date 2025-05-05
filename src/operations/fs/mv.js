@@ -5,7 +5,6 @@ import { pipeline } from 'node:stream/promises';
 
 import { handleFsRm } from './rm.js';
 import { handleError } from '../../utils/index.js';
-import { OPERATION_SUCCESS_USER_MESSAGE } from '../../vars/userMessages.js';
 
 async function handleFsMv (pathToFile, pathToNewDirectory) {
   try {
@@ -19,7 +18,6 @@ async function handleFsMv (pathToFile, pathToNewDirectory) {
     
     await pipeline(readStreamPath, writeStreamPath);
     await handleFsRm(pathToFile);
-    
   } catch (err) {
     handleError(err);
   }

@@ -1,11 +1,20 @@
 import os from 'node:os';
 
 function handleOsEol() {
-  console.log('\nEOL', os.EOL);
+  console.log('\nEOL (default system End-Of-Line):', JSON.stringify(os.EOL));
 }
 
 function handleOsCpus() {
-  console.info('\ncpus', os.cpus(), '\n');
+  const cpus = os.cpus();
+  console.log('\nCPU Information:');
+  console.log(`Overall amount of CPUs: ${cpus.length}`);
+  
+  cpus.forEach((cpu, index) => {
+    const clockSpeedGHz = cpu.speed / 1000; // Convert MHz to GHz
+    console.log(`\nCPU ${index + 1}:`);
+    console.log(`\nModel: ${cpu.model}`);
+    console.log(`\nClock Rate: ${clockSpeedGHz.toFixed(2)} GHz`);
+  });
 }
 
 function handleOsHomedir() {
