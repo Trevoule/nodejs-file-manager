@@ -2,15 +2,14 @@ import { join } from 'node:path';
 import os from 'node:os';
 
 import { COMMAND_OPERATIONS } from '../vars/commandOperations.js';
-import { EEXIST_ERROR_MESSAGE, ENOENT_ERROR_MESSAGE, ERROR_MESSAGE, INVALID_FILE_NAME_ERROR_MESSAGE, MESSAGE_COLORS } from '../vars/userMessages.js';
+import { INVALID_FILE_NAME_ERROR_MESSAGE, MESSAGE_COLORS } from '../vars/userMessages.js';
 
 function handleCurrentPath(currentDirectory, nextDirectory) {
   const rootDir = os.homedir() + '/';
   const newDirectory = join(currentDirectory, nextDirectory);
 
   if (newDirectory.length > rootDir.length) return newDirectory;
-  if (rootDir === currentDirectory) return rootDir;
-  return newDirectory;
+  return rootDir;
 };
 
 function printCommandsInfo(operation) {
